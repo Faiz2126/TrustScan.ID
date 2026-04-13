@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustScan.id - Verifikasi Cepat & Terpercaya</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* CSS Variables untuk Dark/Light Mode */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #1f2937;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --card-bg: #f8fafc;
+            --transition-speed: 0.3s;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --text-color: #f1f5f9;
+            --nav-bg: rgba(15, 23, 42, 0.8);
+            --primary-color: #3b82f6;
+            --secondary-color: #94a3b8;
+            --card-bg: #1e293b;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, sans-serif;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-fade { animation: fadeIn 0.5s ease-out forwards; }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 10%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .btn-theme {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .btn-login {
+            background: var(--primary-color);
+            color: white !important;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-weight: 600;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 10%;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary-color), #8b5cf6);
+            -webkit-text-fill-color: transparent;
+            -webkit-background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* Custom Modal (In-page) */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--bg-color);
+            padding: 2.5rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: scaleIn 0.3s ease-out;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--secondary-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .register-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .opt-card {
+            padding: 1.5rem;
+            border: 2px solid var(--secondary-color);
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: 0.2s;
+        }
+
+        .opt-card:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .opt-card i { font-size: 2rem; margin-bottom: 10px; color: var(--primary-color); }
+
+        .btn-full {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 10%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        /* Mobile Menu */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <nav>
+        <div class="logo">TrustScan.id</div>
+        <div class="nav-links">
+            <a href="#">Beranda</a>
+            <a href="#">Fitur UMKM</a>
+            <a href="#">Keamanan</a>
+            <a href="#">Kontak</a>
+            <button class="btn-theme" onclick="toggleTheme()" id="themeIcon">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="btn-login" onclick="openModal('loginModal')">Masuk</button>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1 class="animate-fade">Kepercayaan dalam Satu Genggaman.</h1>
+        <p class="animate-fade" style="animation-delay: 0.2s;">
+            Platform verifikasi identitas dan bisnis tercanggih di Indonesia. 
+            Aman, transparan, dan mendukung pertumbuhan UMKM nasional.
+        </p>
+        <div class="animate-fade" style="animation-delay: 0.4s;">
+            <button class="btn-login" style="padding: 1rem 2.5rem; font-size: 1.1rem;" onclick="openModal('registerModal')">
+                Mulai Sekarang — Gratis
+            </button>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-card">
+            <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            <h3>Keamanan Berlapis</h3>
+            <p>Data Anda dienkripsi dengan standar bank internasional.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-bolt" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            <h3>Verifikasi Instan</h3>
+            <p>Proses scan dan validasi hanya memakan waktu hitungan detik.</p>
+        </div>
+        <div class="feature-card">
+            <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+            <h3>Dashboard Bisnis</h3>
+            <p>Pantau semua aktivitas transaksi dan scan dalam satu dasbor.</p>
+        </div>
+    </section>
+
+    <div id="loginModal" class="overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="margin-bottom: 0.5rem;">Selamat Datang Kembali</h2>
+            <p style="color: var(--secondary-color); font-size: 0.9rem; margin-bottom: 2rem;">Masuk ke akun TrustScan Anda</p>
+            
+            <div class="form-group">
+                <label>Nomor WA atau Gmail</label>
+                <input type="text" id="loginId" placeholder="Ketik 'user' atau 'umkm'">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPass" placeholder="Kosongkan password">
+            </div>
+            <button class="btn-full" onclick="handleLogin()">Masuk</button>
+            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.85rem;">
+                Belum punya akun? <a href="#" onclick="switchModal('loginModal', 'registerModal')" style="color: var(--primary-color);">Daftar di sini</a>
+            </p>
+        </div>
+    </div>
+
+    <div id="registerModal" class="overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal" onclick="closeModal('registerModal')">&times;</span>
+            <h2 style="margin-bottom: 0.5rem;">Daftar Akun Baru</h2>
+            <p style="color: var(--secondary-color); font-size: 0.9rem; margin-bottom: 2rem;">Pilih jenis akun untuk melanjutkan</p>
+            
+            <div class="register-options">
+                <div class="opt-card" onclick="handleAuth('umkm')">
+                    <i class="fas fa-store"></i>
+                    <h4>UMKM</h4>
+                    <p style="font-size: 0.75rem; color: var(--secondary-color); margin-top: 5px;">Untuk pemilik bisnis & toko</p>
+                </div>
+                <div class="opt-card" onclick="handleAuth('pengguna')">
+                    <i class="fas fa-user"></i>
+                    <h4>Pengguna</h4>
+                    <p style="font-size: 0.75rem; color: var(--secondary-color); margin-top: 5px;">Untuk pembeli & personal</p>
+                </div>
+            </div>
+            
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.85rem;">
+                Sudah punya akun? <a href="#" onclick="switchModal('registerModal', 'loginModal')" style="color: var(--primary-color);">Masuk</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.querySelector('#themeIcon i');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // Modal Logic
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden'; 
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchModal(oldId, newId) {
+            closeModal(oldId);
+            setTimeout(() => openModal(newId), 100);
+        }
+
+        window.onclick = function(event) {
+            if (event.target.className === 'overlay') {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // LOGIKA LOGIN KHUSUS (MODIFIKASI DI SINI)
+        function handleLogin() {
+            const inputId = document.getElementById('loginId').value.toLowerCase().trim();
+            const inputPass = document.getElementById('loginPass').value;
+
+            // Cek jika password kosong
+            if (inputPass === "") {
+                if (inputId === "user") {
+                    alert('Login Berhasil sebagai PENGGUNA. Mengalihkan...');
+                    window.location.href = 'dashboard-pengguna.html';
+                } 
+                else if (inputId === "umkm") {
+                    alert('Login Berhasil sebagai UMKM. Mengalihkan...');
+                    window.location.href = 'dashboard-umkm.html';
+                } 
+                else {
+                    alert('Input tidak dikenal. Gunakan kata "user" atau "umkm" dan kosongkan password.');
+                }
+            } else {
+                alert('Sesuai instruksi, password harus dikosongkan!');
+            }
+        }
+
+        // Logika Registrasi (Masih sama)
+        function handleAuth(type) {
+            alert('Pendaftaran berhasil! Mengalihkan ke Dashboard ' + type.toUpperCase() + '...');
+            if(type === 'umkm') {
+                window.location.href = 'dashboard-umkm.html';
+            } else {
+                window.location.href = 'dashboard-pengguna.html';
+            }
+        }
+    </script>
+</body>
+</html>

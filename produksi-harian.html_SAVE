@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produksi Hari Ini - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #2563eb;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --primary-color: #3b82f6;
+            --border-color: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Layout Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 30px;
+        }
+
+        /* Form Styling */
+        .input-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-print {
+            width: 100%;
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Label Print Area */
+        .print-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .qr-label {
+            background: white; /* Selalu putih agar mudah discan */
+            color: black;      /* Selalu hitam agar teks terbaca saat diprint */
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            page-break-inside: avoid;
+        }
+
+        .qr-code-canvas {
+            margin-bottom: 15px;
+        }
+
+        .label-details {
+            font-size: 0.75rem;
+            width: 100%;
+            text-align: left;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .label-details div {
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .label-details b { color: #555; }
+
+        /* Print Settings */
+        @media print {
+            body { background: white; padding: 0; }
+            .input-card, .btn-back, header { display: none !important; }
+            main { margin-left: 0 !important; }
+            .main-grid { display: block; }
+            .qr-label {
+                border: 1px solid #000;
+                margin-bottom: 20px;
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .input-card { position: static; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="container">
+        <header>
+            <a href="#" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
+            <h2>Produksi Hari Ini</h2>
+            <button onclick="toggleTheme()" class="btn-generate" style="width: auto; padding: 8px 15px;">
+                <i class="fas fa-adjust"></i>
+            </button>
+        </header>
+
+        <div class="main-grid">
+            <div class="input-card">
+                <h3 style="margin-bottom: 20px;">Input Data Produksi</h3>
+                
+                <div class="form-group">
+                    <label>Rentang Nomor Seri (Awal - Akhir)</label>
+                    <div style="display: flex; gap: 5px;">
+                        <input type="number" id="snStart" placeholder="001">
+                        <input type="number" id="snEnd" placeholder="010">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Komposisi</label>
+                    <textarea id="komposisi" rows="3" placeholder="Gula, Tepung, Perasa..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Waktu Produksi</label>
+                    <input type="datetime-local" id="waktuProduksi">
+                </div>
+
+                <div class="form-group">
+                    <label>Masa Kadaluarsa</label>
+                    <input type="date" id="waktuExp">
+                </div>
+
+                <div class="form-group">
+                    <label>Berat Bersih</label>
+                    <input type="text" id="berat" placeholder="250 Gram">
+                </div>
+
+                <div class="form-group">
+                    <label>No. Telp Toko</label>
+                    <input type="tel" id="telp" placeholder="08123456789">
+                </div>
+
+                <div class="form-group">
+                    <label>Link Toko (URL)</label>
+                    <input type="url" id="linkToko" placeholder="https://trustscan.id/tokomu">
+                </div>
+
+                <button class="btn-generate" onclick="generateLabels()">Generate QR Labels</button>
+                <button id="btnPrint" class="btn-print" onclick="window.print()">
+                    <i class="fas fa-print"></i> Cetak Semua Label
+                </button>
+            </div>
+
+            <div class="print-area" id="printArea">
+                <div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 50px;">
+                    <i class="fas fa-qrcode" style="font-size: 4rem; opacity: 0.2; margin-bottom: 15px;"></i>
+                    <p>Isi form di samping untuk membuat label QR</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set Default Date Today
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('waktuProduksi').value = now.toISOString().slice(0, 16);
+
+        function generateLabels() {
+            const snStart = parseInt(document.getElementById('snStart').value);
+            const snEnd = parseInt(document.getElementById('snEnd').value);
+            const komposisi = document.getElementById('komposisi').value;
+            const waktuProd = document.getElementById('waktuProduksi').value;
+            const waktuExp = document.getElementById('waktuExp').value;
+            const berat = document.getElementById('berat').value;
+            const telp = document.getElementById('telp').value;
+            const link = document.getElementById('linkToko').value;
+
+            if (isNaN(snStart) || isNaN(snEnd) || !komposisi) {
+                alert("Mohon isi Rentang Nomor Seri dan Komposisi!");
+                return;
+            }
+
+            const printArea = document.getElementById('printArea');
+            printArea.innerHTML = ''; // Clear previous
+            
+            for (let i = snStart; i <= snEnd; i++) {
+                const snPadded = i.toString().padStart(3, '0');
+                
+                // Create Label Element
+                const labelDiv = document.createElement('div');
+                labelDiv.className = 'qr-label';
+                
+                // Data for QR
+                const qrContent = `SN: ${snPadded}\nProd: ${waktuProd}\nExp: ${waktuExp}\nKomposisi: ${komposisi}\nStore: ${link}`;
+
+                labelDiv.innerHTML = `
+                    <h3 style="margin-bottom:10px; font-size:1.1rem;">TrustScan Verified</h3>
+                    <div id="qr-${snPadded}" class="qr-code-canvas"></div>
+                    <div style="font-weight:800; margin-bottom:10px;">SN: ${snPadded}</div>
+                    <div class="label-details">
+                        <div><b>Produksi:</b> <span>${waktuProd.replace('T', ' ')}</span></div>
+                        <div><b>Kadaluarsa:</b> <span>${waktuExp}</span></div>
+                        <div><b>Berat:</b> <span>${berat}</span></div>
+                        <div><b>WA:</b> <span>${telp}</span></div>
+                        <div style="flex-direction:column; margin-top:5px;">
+                            <b>Komposisi:</b>
+                            <span style="font-size:0.7rem; color:#666;">${komposisi}</span>
+                        </div>
+                    </div>
+                `;
+
+                printArea.appendChild(labelDiv);
+
+                // Generate the actual QR
+                new QRCode(document.getElementById(`qr-${snPadded}`), {
+                    text: qrContent,
+                    width: 140,
+                    height: 140,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            }
+
+            document.getElementById('btnPrint').style.display = 'block';
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            body.setAttribute('data-theme', body.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+        }
+    </script>
+</body>
+</html>

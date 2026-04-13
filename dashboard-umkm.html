@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dasbor UMKM - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --text-secondary: #64748b;
+            --primary-color: #2563eb;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --primary-color: #3b82f6;
+            --border-color: #334155;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 2.5rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content Area */
+        main {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem 5%;
+        }
+
+        /* Header / Navbar Inside */
+        header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .user-profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            background: var(--card-bg);
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .user-profile-trigger img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* My Account Popup */
+        #accountPopup {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 250px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: none;
+            z-index: 1001;
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Sections */
+        .section-content { display: none; }
+        .section-content.active { display: block; animation: fadeIn 0.4s ease-in; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Form Styling */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Product Grid */
+        .search-bar {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-color);
+            margin-bottom: 25px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; margin-bottom: 10px; }
+        .btn-edit {
+            width: 100%;
+            background: #f1f5f9;
+            color: #1e293b;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Sertifikasi Cards */
+        .cert-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .cert-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Social Media */
+        .social-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .social-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <aside>
+        <div class="logo">TrustScan.id</div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="showSection('dasbor', this)">
+                <i class="fas fa-th-large"></i> Dasbor
+            </li>
+            <li class="nav-item" onclick="showSection('tambah', this)">
+                <i class="fas fa-plus-circle"></i> Tambah Produk
+            </li>
+            <li class="nav-item" onclick="showSection('sertif', this)">
+                <i class="fas fa-certificate"></i> Sertifikasi
+            </li>
+            <li class="nav-item" onclick="window.location.href='produksi-harian.html'">
+                <i class="fas fa-calendar-check"></i> Produksi Hari Ini
+            </li>
+            <li class="nav-item" onclick="showSection('sosmed', this)">
+                <i class="fas fa-share-alt"></i> Media Sosial
+            </li>
+        </ul>
+    </aside>
+
+    <main>
+        <header>
+            <div class="user-profile-trigger" onclick="togglePopup()">
+                <img src="https://ui-avatars.com/api/?name=Manov&background=2563eb&color=fff" alt="User">
+                <span style="font-weight: 600;">Entrepreneur</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+
+            <div id="accountPopup">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <img src="https://ui-avatars.com/api/?name=Manov&background=2563eb&color=fff" style="width: 50px; border-radius: 50%;">
+                    <h5 style="margin-top: 10px;">Manov</h5>
+                    <p style="font-size: 0.7rem; color: var(--text-secondary);">Owner TrustScan Shop</p>
+                </div>
+                <div style="border-top: 1px solid var(--border-color); padding-top: 10px;">
+                    <div class="nav-item" style="font-size: 0.9rem;"><i class="fas fa-user-cog"></i> Pengaturan</div>
+                    <div class="nav-item" style="font-size: 0.9rem;" onclick="toggleTheme()">
+                        <i class="fas fa-adjust"></i> <span id="themeLabel">Mode Gelap</span>
+                    </div>
+                    <a href="index.html" class="nav-item" style="font-size: 0.9rem; color: #ef4444;">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div id="section-dasbor" class="section-content active">
+            <h2>Etalase Produk Saya</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Kelola dan edit produk yang sudah tayang.</p>
+            
+            <div style="position: relative;">
+                <i class="fas fa-search" style="position: absolute; left: 15px; top: 15px; color: var(--text-secondary);"></i>
+                <input type="text" class="search-bar" placeholder="Cari produk Anda..." onkeyup="searchProduct(this)">
+            </div>
+
+            <div class="product-grid" id="myProducts">
+                </div>
+        </div>
+
+        <div id="section-tambah" class="section-content">
+            <h2>Tambah Produk Baru</h2>
+            <div class="form-grid" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label>Foto Produk</label>
+                    <input type="file">
+                </div>
+                <div class="form-group">
+                    <label>Nama Produk</label>
+                    <input type="text" placeholder="Masukkan nama produk">
+                </div>
+                <div class="form-group">
+                    <label>Sertifikasi (Halal/BPOM/SNI)</label>
+                    <input type="file">
+                </div>
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select>
+                        <option>Makanan</option>
+                        <option>Minuman</option>
+                        <option>Konveksi</option>
+                        <option>Barang</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Harga (Rp)</label>
+                    <input type="number" placeholder="10000">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Deskripsi Produk</label>
+                    <textarea rows="4" placeholder="Jelaskan detail produk Anda..."></textarea>
+                </div>
+                <button class="btn-primary" style="grid-column: span 2;">Pajang di Etalase</button>
+            </div>
+        </div>
+
+        <div id="section-sertif" class="section-content">
+            <h2>Pengajuan Sertifikasi</h2>
+            <div class="cert-container" style="margin-top: 20px;">
+                <div class="cert-card">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color: #10b981;"></i>
+                    <h3 style="margin: 15px 0;">Sertifikasi HALAL</h3>
+                    <button class="btn-primary" onclick="alert('Buka Form Halal')">Ajukan Sekarang</button>
+                </div>
+                <div class="cert-card">
+                    <i class="fas fa-flask" style="font-size: 3rem; color: #3b82f6;"></i>
+                    <h3 style="margin: 15px 0;">Izin BPOM</h3>
+                    <button class="btn-primary" onclick="alert('Buka Form BPOM')">Ajukan Sekarang</button>
+                </div>
+                <div class="cert-card">
+                    <i class="fas fa-award" style="font-size: 3rem; color: #f59e0b;"></i>
+                    <h3 style="margin: 15px 0;">Standar SNI</h3>
+                    <button class="btn-primary" onclick="alert('Buka Form SNI')">Ajukan Sekarang</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="section-sosmed" class="section-content">
+            <h2>Media Sosial & Kontak</h2>
+            <div class="social-grid" style="margin-top: 20px;">
+                <div class="social-item"><i class="fab fa-whatsapp" style="color:#25D366"></i> <input type="text" placeholder="Nomor WhatsApp"></div>
+                <div class="social-item"><i class="fab fa-instagram" style="color:#E1306C"></i> <input type="text" placeholder="Username Instagram"></div>
+                <div class="social-item"><i class="fab fa-facebook" style="color:#1877F2"></i> <input type="text" placeholder="Link Facebook"></div>
+                <div class="social-item"><i class="fab fa-tiktok" style="color:#000000"></i> <input type="text" placeholder="Username TikTok"></div>
+                <div class="social-item"><i class="fas fa-shopping-bag" style="color:#EE4D2D"></i> <input type="text" placeholder="Link Shopee"></div>
+                <div class="social-item"><i class="fas fa-store" style="color:#03AC0E"></i> <input type="text" placeholder="Link Tokopedia"></div>
+            </div>
+            <button class="btn-primary" style="margin-top: 20px;">Simpan Perubahan</button>
+        </div>
+    </main>
+
+    <script>
+        // Dummy Data Generation (12 Items)
+        const products = [
+            { id: 1, name: "Basreng Pedas Daun Jeruk", cat: "Makanan", price: "15.000", img: "https://images.unsplash.com/photo-1599487488170-d11ec9c175f0?w=200" },
+            { id: 2, name: "Kopi Gula Aren", cat: "Minuman", price: "18.000", img: "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=200" },
+            { id: 3, name: "Kaos Polos Premium", cat: "Konveksi", price: "65.000", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200" },
+            { id: 4, name: "Totebag Kanvas", cat: "Konveksi", price: "35.000", img: "https://images.unsplash.com/photo-1544816153-12ad5d714b21?w=200" },
+            { id: 5, name: "Sambal Matah Botol", cat: "Makanan", price: "25.000", img: "https://images.unsplash.com/photo-1589135340847-51a396599185?w=200" },
+            { id: 6, name: "Teh Tarik Instan", cat: "Minuman", price: "12.000", img: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=200" },
+            { id: 7, name: "Kripik Singkong", cat: "Makanan", price: "10.000", img: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=200" },
+            { id: 8, name: "Hoodie Oversize", cat: "Konveksi", price: "120.000", img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200" },
+            { id: 9, name: "Gantungan Kunci Kayu", cat: "Barang", price: "5.000", img: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=200" },
+            { id: 10, name: "Tumblr Stainless", cat: "Barang", price: "85.000", img: "https://images.unsplash.com/photo-1517254456976-ee8682099819?w=200" },
+            { id: 11, name: "Madu Hutan Murni", cat: "Makanan", price: "95.000", img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=200" },
+            { id: 12, name: "Susu Kedelai Fresh", cat: "Minuman", price: "7.000", img: "https://images.unsplash.com/photo-1550583724-125581cc255b?w=200" },
+        ];
+
+        function renderProducts() {
+            const grid = document.getElementById('myProducts');
+            grid.innerHTML = products.map(p => `
+                <div class="product-card" data-name="${p.name.toLowerCase()}">
+                    <img src="${p.img}" alt="prod">
+                    <span style="font-size:0.7rem; color:var(--primary-color); font-weight:700;">${p.cat}</span>
+                    <h4 style="margin:5px 0;">${p.name}</h4>
+                    <p style="font-weight:700; color:var(--primary-color);">Rp ${p.price}</p>
+                    <button class="btn-edit" onclick="alert('Edit Halaman ${p.name}')"><i class="fas fa-edit"></i> Edit Produk</button>
+                </div>
+            `).join('');
+        }
+
+        renderProducts();
+
+        // Navigation Logic
+        function showSection(id, element) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Search Own Product
+        function searchProduct(input) {
+            const val = input.value.toLowerCase();
+            document.querySelectorAll('.product-card').forEach(card => {
+                const name = card.getAttribute('data-name');
+                card.style.display = name.includes(val) ? 'block' : 'none';
+            });
+        }
+
+        // Account Popup
+        function togglePopup() {
+            const p = document.getElementById('accountPopup');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Theme Toggle
+        function toggleTheme() {
+            const b = document.body;
+            const label = document.getElementById('themeLabel');
+            if(b.getAttribute('data-theme') === 'light') {
+                b.setAttribute('data-theme', 'dark');
+                label.innerText = 'Mode Terang';
+            } else {
+                b.setAttribute('data-theme', 'light');
+                label.innerText = 'Mode Gelap';
+            }
+        }
+
+        // Close popup when click outside
+        window.onclick = function(e) {
+            if(!e.target.closest('.user-profile-trigger') && !e.target.closest('#accountPopup')) {
+                document.getElementById('accountPopup').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

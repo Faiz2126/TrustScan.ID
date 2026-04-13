@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produksi Hari Ini - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --primary-color: #2563eb;
+            --border-color: #e2e8f0;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f1f5f9;
+            --border-color: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; }
+
+        /* Sidebar & Navbar Consistency */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn-back {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Styling */
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .production-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group label { font-size: 0.85rem; font-weight: 600; }
+        .form-group input, .form-group textarea {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-generate {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 1rem;
+        }
+
+        /* QR Preview Area */
+        .preview-area {
+            margin-top: 40px;
+        }
+
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        /* Tampilan QR untuk Print */
+        .qr-item {
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: black; /* Selalu hitam saat print */
+        }
+
+        .qr-code-canvas { margin-bottom: 10px; }
+        
+        .qr-info {
+            font-size: 10px;
+            line-height: 1.2;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Media Query untuk Print */
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+            .preview-area { margin: 0; }
+            .qr-grid { 
+                display: grid; 
+                grid-template-columns: repeat(4, 1fr); 
+                gap: 10px;
+            }
+            .qr-item { 
+                border: 1px solid #000; 
+                page-break-inside: avoid;
+                padding: 10px;
+            }
+            .qr-info { color: black; }
+        }
+
+        .user-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .user-trigger img { width: 35px; border-radius: 50%; }
+
+    </style>
+</head>
+<body data-theme="light">
+
+    <div class="container">
+        <header class="no-print">
+            <a href="dashboard-umkm.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
+            <div class="user-trigger">
+                <span id="themeBtn" onclick="toggleTheme()" style="cursor:pointer; margin-right:15px;"><i class="fas fa-moon"></i></span>
+                <img src="https://ui-avatars.com/api/?name=Ilham+Faza&background=2563eb&color=fff" alt="User">
+                <span style="font-weight: 600;">UMKM Mode</span>
+            </div>
+        </header>
+
+        <div class="production-card no-print">
+            <h2 style="margin-bottom: 10px;"><i class="fas fa-print"></i> Produksi & Cetak Label QR</h2>
+            <p style="color: gray; font-size: 0.9rem;">Isi formulir di bawah untuk mencetak label hari ini.</p>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nomor Seri Awal</label>
+                    <input type="number" id="serialStart" value="1001">
+                </div>
+                <div class="form-group">
+                    <label>Jumlah Cetak (Serial)</label>
+                    <input type="number" id="serialCount" value="4">
+                </div>
+                <div class="form-group">
+                    <label>Berat Bersih (Netto)</label>
+                    <input type="text" id="netto" placeholder="250gr / 1kg">
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Produksi</label>
+                    <input type="date" id="prodDate">
+                </div>
+                <div class="form-group">
+                    <label>Masa Kadaluarsa</label>
+                    <input type="date" id="expDate">
+                </div>
+                <div class="form-group">
+                    <label>Nomor WA Toko</label>
+                    <input type="text" id="waStore" placeholder="0812...">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Link Toko (Shopee/Tokopedia/Web)</label>
+                    <input type="text" id="linkStore" placeholder="https://trustscan.id/shop/my-umkm">
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Komposisi</label>
+                    <textarea id="composition" rows="2" placeholder="Garam, Gula, Terigu, dll..."></textarea>
+                </div>
+            </div>
+
+            <button class="btn-generate" onclick="generateQRs()">
+                <i class="fas fa-qrcode"></i> Buat Label QR & Siapkan Cetak
+            </button>
+        </div>
+
+        <div class="preview-area">
+            <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>Preview Label (Siap Cetak)</h3>
+                <button onclick="window.print()" class="btn-primary" style="padding: 10px 20px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                    <i class="fas fa-print"></i> Cetak Sekarang (PDF)
+                </button>
+            </div>
+
+            <div id="qrContainer" class="qr-grid">
+                <p class="no-print" style="color: gray; text-align: center; grid-column: 1/-1;">Belum ada label yang dibuat.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set default date to today
+        document.getElementById('prodDate').valueAsDate = new Date();
+
+        function generateQRs() {
+            const container = document.getElementById('qrContainer');
+            const start = parseInt(document.getElementById('serialStart').value);
+            const count = parseInt(document.getElementById('serialCount').value);
+            const netto = document.getElementById('netto').value;
+            const prodDate = document.getElementById('prodDate').value;
+            const expDate = document.getElementById('expDate').value;
+            const composition = document.getElementById('composition').value;
+            const wa = document.getElementById('waStore').value;
+            const link = document.getElementById('linkStore').value;
+
+            // Clear previous
+            container.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                const currentSerial = start + i;
+                
+                // Data yang masuk ke dalam QR (disimplifikasi agar gampang di scan)
+                const qrContent = `SN:${currentSerial}|Komp:${composition}|Prod:${prodDate}|Exp:${expDate}|WA:${wa}|Netto:${netto}`;
+
+                // Create Item element
+                const qrItem = document.createElement('div');
+                qrItem.className = 'qr-item';
+                
+                // Create Div for QR Code
+                const qrCodeDiv = document.createElement('div');
+                qrCodeDiv.className = 'qr-code-canvas';
+                qrItem.appendChild(qrCodeDiv);
+
+                // Add Info Text (Tanggal Produksi & Kadaluarsa)
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'qr-info';
+                infoDiv.innerHTML = `
+                    PROD: ${prodDate}<br>
+                    EXP: ${expDate}<br>
+                    SN: ${currentSerial}
+                `;
+                qrItem.appendChild(infoDiv);
+
+                container.appendChild(qrItem);
+
+                // Generate QR Code
+                new QRCode(qrCodeDiv, {
+                    text: qrContent,
+                    width: 100,
+                    height: 100,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M // Level M untuk scan cepat di kemasan
+                });
+            }
+        }
+
+        function toggleTheme() {
+            const b = document.body;
+            const icon = document.querySelector('#themeBtn i');
+            if(b.getAttribute('data-theme') === 'light') {
+                b.setAttribute('data-theme', 'dark');
+                icon.className = 'fas fa-sun';
+            } else {
+                b.setAttribute('data-theme', 'light');
+                icon.className = 'fas fa-moon';
+            }
+        }
+    </script>
+</body>
+</html>
