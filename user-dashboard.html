@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustScan.id - Dashboard User</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --bg-color: #f4f7fe; --card-bg: #ffffff; --text-color: #1b2559;
+            --text-secondary: #a3aed0; --primary-color: #4318ff;
+            --border-color: #e0e5f2; --shadow: 0px 20px 40px rgba(112, 144, 176, 0.1);
+        }
+        [data-theme="dark"] {
+            --bg-color: #0b1437; --card-bg: #111c44; --text-color: #ffffff;
+            --text-secondary: #8f9bba; --primary-color: #7551ff; --border-color: #1b254b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 90px; overflow-x: hidden; }
+
+        /* Header & Popup */
+        header { position: fixed; top: 0; width: 100%; padding: 0.8rem 5%; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); cursor: pointer; }
+        .user-profile-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--card-bg); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .user-profile-trigger img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+        
+        #accountPopup { position: absolute; top: 70px; right: 5%; width: 250px; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow); padding: 20px; display: none; z-index: 1001; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .nav-item { padding: 10px; display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-color); font-size: 0.9rem; border-radius: 10px; transition: 0.2s; }
+        .nav-item:hover { background: var(--bg-color); color: var(--primary-color); }
+
+        /* Layout Grid */
+        main { max-width: 1300px; margin: 0 auto; padding: 20px 5%; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+        
+        /* Search & Filter */
+        .search-area { display: flex; gap: 10px; margin-bottom: 25px; }
+        .search-box { flex: 1; position: relative; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+        .search-box input { width: 100%; padding: 12px 15px 12px 40px; border-radius: 15px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color); outline: none; }
+        
+        .filter-section { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding: 5px; }
+        .filter-chip { padding: 10px 20px; background: var(--card-bg); border-radius: 12px; cursor: pointer; border: 1px solid var(--border-color); white-space: nowrap; font-size: 0.85rem; font-weight: 600; }
+        .filter-chip.active { background: var(--primary-color); color: white; border-color: var(--primary-color); }
+
+        /* Product Cards */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .product-card { background: var(--card-bg); border-radius: 25px; overflow: hidden; border: 1px solid var(--border-color); cursor: pointer; position: relative; animation: fadeIn 0.5s ease backwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .product-card:hover { transform: translateY(-10px); box-shadow: var(--shadow); }
+        .product-img { width: 100%; height: 160px; object-fit: cover; }
+        .product-info { padding: 15px; }
+        .price { font-weight: 800; color: var(--primary-color); font-size: 1.1rem; margin-top: 8px; }
+
+        /* Sidebar Map & Shop List */
+        .sidebar { position: sticky; top: 110px; height: fit-content; }
+        #map { width: 100%; height: 250px; border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 20px; z-index: 1; }
+        
+        .shop-list-mini { display: flex; flex-direction: column; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .mini-shop-card { 
+            background: var(--card-bg); padding: 12px; border-radius: 18px; 
+            display: flex; align-items: center; gap: 12px; 
+            border: 1px solid var(--border-color); cursor: pointer; transition: 0.3s;
+        }
+        .mini-shop-card:hover { border-color: var(--primary-color); transform: translateX(5px); box-shadow: var(--shadow); }
+        .mini-shop-card img { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; }
+        .shop-badge { font-size: 0.65rem; background: rgba(67, 24, 255, 0.1); color: var(--primary-color); padding: 2px 8px; border-radius: 10px; font-weight: 700; margin-top: 4px; display: inline-block; }
+
+        @media (max-width: 992px) { main { grid-template-columns: 1fr; } .sidebar { position: static; } }
+    </style>
+</head>
+<body data-theme="light">
+
+    <header>
+        <div class="logo">TrustScan.id</div>
+        <div class="user-profile-trigger" onclick="togglePopup()">
+            <img src="https://ui-avatars.com/api/?name=Faizal&background=2563eb&color=fff" alt="User">
+            <span style="font-weight: 600;">Faizal</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+        <div id="accountPopup">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="https://ui-avatars.com/api/?name=Faizal&background=2563eb&color=fff" style="width: 50px; border-radius: 50%;">
+                <h5 style="margin-top: 10px;">Faizal</h5>
+                <p style="font-size: 0.7rem; color: var(--text-secondary);">Verified Consumer</p>
+            </div>
+            <div style="border-top: 1px solid var(--border-color); padding-top: 10px;">
+                <a href="user-settings.html" class="nav-item"><i class="fas fa-user-circle"></i> Pengaturan Profil</a>
+                <div class="nav-item" onclick="toggleTheme()" style="cursor:pointer;"><i class="fas fa-adjust"></i> <span id="themeLabel">Mode Gelap</span></div>
+                <a href="index.html" class="nav-item" style="color: #ef4444;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="content-left">
+            <div class="search-area">
+                <div class="search-box"><i class="fas fa-search"></i><input type="text" id="pSearch" placeholder="Cari Produk..." onkeyup="filterAll()"></div>
+                <div class="search-box"><i class="fas fa-store"></i><input type="text" id="sSearch" placeholder="Cari Toko..." onkeyup="filterAll()"></div>
+            </div>
+
+            <div class="filter-section" id="categoryFilters">
+                <div class="filter-chip active" onclick="filterCat('semua', this)">Semua</div>
+                <div class="filter-chip" onclick="filterCat('makanan', this)">Makanan</div>
+                <div class="filter-chip" onclick="filterCat('minuman', this)">Minuman</div>
+                <div class="filter-chip" onclick="filterCat('fashion', this)">Fashion</div>
+                <div class="filter-chip" onclick="filterCat('elektronik', this)">Elektronik</div>
+            </div>
+
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+
+        <aside class="sidebar">
+            <h4 style="margin-bottom: 15px; font-size: 0.9rem;">📍 Lokasi Toko Terdaftar</h4>
+            <div id="map"></div>
+            
+            <h4 style="margin-bottom: 15px; font-size: 0.9rem;">🏢 Daftar Toko</h4>
+            <div class="shop-list-mini" id="miniShopList">
+                </div>
+        </aside>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const products = [
+            { id: 1, name: "Bakso Mercon Super", cat: "makanan", shop: "Warung Pak Aris", price: "15.000", coords: [-7.9810, 112.6250], img: "https://images.unsplash.com/photo-1541518763669-27fef04b14ea?w=400" },
+            { id: 2, name: "Brown Sugar Boba", cat: "minuman", shop: "Boba Time Malang", price: "12.000", coords: [-7.9520, 112.6150], img: "https://images.unsplash.com/photo-1544434553-9415abc4fb35?w=400" },
+            { id: 3, name: "Kaos Polos Cotton", cat: "fashion", shop: "Konveksi Jaya", price: "45.000", coords: [-8.0010, 112.6180], img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400" },
+            { id: 4, name: "Micro USB Cable", cat: "elektronik", shop: "Faza Robotika", price: "25.000", coords: [-7.9400, 112.6400], img: "https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=400" },
+            { id: 5, name: "Sate Ayam Madura", cat: "makanan", shop: "Sate Cak Di", price: "20.000", coords: [-7.9700, 112.6300], img: "https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400" },
+            { id: 6, name: "Kopi Tubruk Asli", cat: "minuman", shop: "Warkop Cak Ali", price: "8.000", coords: [-7.9600, 112.6200], img: "https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=400" },
+            { id: 7, name: "Hoodie Oversize", cat: "fashion", shop: "Konveksi Jaya", price: "120.000", coords: [-8.0010, 112.6180], img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400" },
+            { id: 8, name: "Arduino Uno R3", cat: "elektronik", shop: "Faza Robotika", price: "95.000", coords: [-7.9400, 112.6400], img: "https://images.unsplash.com/photo-1553406830-ef2513450d76?w=400" }
+        ];
+
+        let map, markers = [];
+        let currentCat = 'semua';
+
+        function initMap() {
+            map = L.map('map').setView([-7.9839, 112.6214], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            renderMarkers();
+        }
+
+        function renderMarkers() {
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+            const shopNames = new Set();
+            
+            products.forEach(p => {
+                const matchSearch = p.name.toLowerCase().includes(document.getElementById('pSearch').value.toLowerCase());
+                const matchShop = p.shop.toLowerCase().includes(document.getElementById('sSearch').value.toLowerCase());
+                const matchCat = currentCat === 'semua' || p.cat === currentCat;
+
+                if (matchSearch && matchShop && matchCat && !shopNames.has(p.shop)) {
+                    const m = L.marker(p.coords).addTo(map).bindPopup(`<b>${p.shop}</b>`);
+                    markers.push(m);
+                    shopNames.add(p.shop);
+                }
+            });
+        }
+
+        function renderShopList() {
+            const list = document.getElementById('miniShopList');
+            list.innerHTML = "";
+            const shopNames = new Set();
+
+            products.forEach(p => {
+                const matchSearch = p.name.toLowerCase().includes(document.getElementById('pSearch').value.toLowerCase());
+                const matchShop = p.shop.toLowerCase().includes(document.getElementById('sSearch').value.toLowerCase());
+                const matchCat = currentCat === 'semua' || p.cat === currentCat;
+
+                if (matchSearch && matchShop && matchCat && !shopNames.has(p.shop)) {
+                    shopNames.add(p.shop);
+                    const card = document.createElement('div');
+                    card.className = 'mini-shop-card';
+                    card.onclick = () => window.location.href = `shop-profile.html?shop=${encodeURIComponent(p.shop)}`;
+                    card.innerHTML = `
+                        <img src="https://ui-avatars.com/api/?background=4318ff&color=fff&name=${encodeURIComponent(p.shop)}" alt="Shop">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.85rem;">${p.shop}</div>
+                            <span class="shop-badge">${p.cat.toUpperCase()}</span>
+                        </div>
+                    `;
+                    list.appendChild(card);
+                }
+            });
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = "";
+            products.forEach((p, i) => {
+                const matchSearch = p.name.toLowerCase().includes(document.getElementById('pSearch').value.toLowerCase());
+                const matchShop = p.shop.toLowerCase().includes(document.getElementById('sSearch').value.toLowerCase());
+                const matchCat = currentCat === 'semua' || p.cat === currentCat;
+
+                if (matchSearch && matchShop && matchCat) {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    card.style.animationDelay = `${i * 0.05}s`;
+                    card.onclick = () => window.location.href = `product-detail.html?id=${p.id}`;
+                    card.innerHTML = `
+                        <img src="${p.img}" class="product-img">
+                        <div class="product-info">
+                            <span style="font-size:0.7rem; color:var(--primary-color); font-weight:700;">${p.cat.toUpperCase()}</span>
+                            <div style="font-weight:700; margin-top:5px;">${p.name}</div>
+                            <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;"><i class="fas fa-store"></i> ${p.shop}</div>
+                            <div class="price">Rp ${p.price}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+        }
+
+        function filterAll() { 
+            renderProducts(); 
+            renderMarkers(); 
+            renderShopList(); 
+        }
+
+        function filterCat(cat, el) {
+            document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            currentCat = cat;
+            filterAll();
+        }
+
+        function togglePopup() {
+            const p = document.getElementById('accountPopup');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleTheme() {
+            const b = document.body;
+            const theme = b.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            b.setAttribute('data-theme', theme);
+            document.getElementById('themeLabel').innerText = theme === 'light' ? 'Mode Gelap' : 'Mode Terang';
+        }
+
+        window.onload = () => { initMap(); renderProducts(); renderShopList(); };
+    </script>
+</body>
+</html>

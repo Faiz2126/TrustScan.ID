@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengajuan BPOM - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg-color: #f8fafc; --sidebar-bg: #ffffff; --card-bg: #ffffff; --text-color: #1e293b; --text-secondary: #64748b; --primary-color: #2563eb; --border-color: #e2e8f0; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); --warning: #f59e0b; }
+        [data-theme="dark"] { --bg-color: #0f172a; --sidebar-bg: #1e293b; --card-bg: #1e293b; --text-color: #f1f5f9; --text-secondary: #94a3b8; --primary-color: #3b82f6; --border-color: #334155; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
+        
+        aside { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); padding: 2rem 1.5rem; position: fixed; height: 100vh; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 2.5rem; }
+        .nav-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-weight: 500; text-decoration: none; }
+        .nav-item.active { background: var(--primary-color); color: white; }
+
+        main { flex: 1; margin-left: 260px; padding: 2rem 5%; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; }
+        .step { text-align: center; flex: 1; position: relative; }
+        .step-icon { width: 35px; height: 35px; border-radius: 50%; background: var(--border-color); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: bold; }
+        .step.active .step-icon { background: var(--primary-color); color: white; }
+        .step.completed .step-icon { background: #10b981; color: white; }
+        .step-label { font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); }
+
+        .form-card { background: var(--card-bg); border-radius: 20px; padding: 35px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.4s; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 0.9rem; }
+        
+        .helper-text { font-size: 0.75rem; color: var(--text-secondary); margin-top: 5px; display: block; }
+        
+        /* Assistance Sidebar */
+        .assistance-sidebar { position: sticky; top: 2rem; height: fit-content; }
+        .help-card { background: #fffbeb; border-radius: 15px; padding: 20px; border: 1px solid #fef3c7; color: #92400e; }
+        .help-card h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.95rem; }
+        .help-link { color: #d97706; text-decoration: none; font-weight: 700; font-size: 0.85rem; display: block; margin-top: 8px; }
+
+        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; }
+        .btn { padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-prev { background: #e2e8f0; color: #475569; }
+        .btn-next { background: var(--primary-color); color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body data-theme="light">
+    <aside>
+        <div class="logo">TrustScan.id</div>
+        <ul class="nav-menu">
+            <a href="umkm-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dasbor</a>
+            <a href="umkm-tambah-produk.html" class="nav-item"><i class="fas fa-plus-circle"></i> Tambah Produk</a>
+            <a href="umkm-sertifikasi.html" class="nav-item active"><i class="fas fa-certificate"></i> Sertifikasi</a>
+            <a href="umkm-produksi.html" class="nav-item"><i class="fas fa-calendar-check"></i> Produksi Hari Ini</a>
+        </ul>
+    </aside>
+
+    <main>
+        <div class="form-container">
+            <header style="margin-bottom: 2rem;">
+                <a href="umkm-sertifikasi.html" style="text-decoration:none; color:var(--text-secondary); font-size:0.9rem;"><i class="fas fa-arrow-left"></i> Kembali</a>
+                <h2 style="margin-top: 10px;">Pengajuan Izin Edar BPOM (MD)</h2>
+            </header>
+
+            <div class="stepper">
+                <div class="step active" id="s1"><div class="step-icon">1</div><div class="step-label">Administrasi</div></div>
+                <div class="step" id="s2"><div class="step-icon">2</div><div class="step-label">Komposisi</div></div>
+                <div class="step" id="s3"><div class="step-icon">3</div><div class="step-label">Lokasi Bangunan</div></div>
+                <div class="step" id="s4"><div class="step-icon">4</div><div class="step-label">Label & Kemasan</div></div>
+            </div>
+
+            <div class="form-card">
+                <form id="bpomForm">
+                    <div class="form-section active" id="section1">
+                        <div class="form-group">
+                            <label>NPWP Badan Usaha / Perorangan</label>
+                            <input type="text" placeholder="00.000.000.0-000.000">
+                        </div>
+                        <div class="form-group">
+                            <label>Jenis Pendaftaran</label>
+                            <select>
+                                <option>Baru (MD)</option>
+                                <option>Variasi (Ganti Desain/Kemasan)</option>
+                                <option>Perpanjangan (Ulang)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat Kantor Pusat</label>
+                            <textarea rows="2" placeholder="Sesuai NIB"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section2">
+                        <div class="form-group">
+                            <label>Komposisi Bahan (Urutkan dari yang Terbanyak)</label>
+                            <textarea rows="4" placeholder="Contoh: Ikan Tenggiri (50%), Tepung Tapioka (30%), Bawang Putih (10%)..."></textarea>
+                            <span class="helper-text">Persentase wajib dicantumkan untuk bahan baku utama.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Masa Simpan (Shelf Life)</label>
+                            <input type="text" placeholder="Contoh: 6 Bulan pada suhu -18C">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section3">
+                        <div class="form-group">
+                            <label>Upload Denah Bangunan (Layout)</label>
+                            <input type="file">
+                            <span class="helper-text">Menunjukkan alur bahan baku sampai barang jadi.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Alur Proses Produksi</label>
+                            <textarea rows="3" placeholder="Jelaskan urutan proses (Cleaning -> Cooking -> Packing)"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section4">
+                        <div class="form-group">
+                            <label>Desain Label (Full Color)</label>
+                            <input type="file">
+                            <span class="helper-text">Format PDF/JPG. Wajib memuat area untuk nomor MD.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Jenis Kemasan</label>
+                            <select>
+                                <option>Plastik (Standing Pouch)</option>
+                                <option>Botol Kaca</option>
+                                <option>Kaleng</option>
+                                <option>Kertas / Karton</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-prev" id="prevBtn" style="visibility: hidden;" onclick="changeStep(-1)">Sebelumnya</button>
+                        <button type="button" class="btn btn-next" id="nextBtn" onclick="changeStep(1)">Lanjut: Detail Komposisi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="assistance-sidebar">
+            <div class="help-card" id="helpContent">
+                <h4><i class="fas fa-info-circle"></i> <span id="helpTitle">Panduan Administrasi</span></h4>
+                <div class="help-content" id="helpBody">
+                    <p>Siapkan NPWP dan NIB yang sudah memiliki izin industri (KBLI sesuai produk).</p>
+                    <a href="#" class="help-link">Apa itu KBLI Industri Makanan? &rarr;</a>
+                </div>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #fde68a;">
+                <div class="download-section">
+                    <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 8px;">Unduhan Pendukung:</p>
+                    <a href="#" class="help-link"><i class="fas fa-file-pdf"></i> Contoh Denah Alur Produksi</a>
+                    <a href="#" class="help-link"><i class="fas fa-file-pdf"></i> Standar Penulisan Label BPOM</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const helpData = {
+            1: {
+                title: "Panduan Administrasi",
+                body: "BPOM MD diperuntukkan bagi industri menengah-besar. Pastikan NPWP Anda sudah tervalidasi di sistem pusat.",
+                link: "#"
+            },
+            2: {
+                title: "Aturan Komposisi",
+                body: "Bahan tambahan pangan (BTP) seperti pengawet harus sesuai dosis maksimal yang diizinkan BPOM.",
+                link: "#"
+            },
+            3: {
+                title: "Layout Produksi",
+                body: "Alur produksi harus searah (unidirectional) untuk mencegah kontaminasi silang antara bahan mentah dan produk jadi.",
+                link: "#"
+            },
+            4: {
+                title: "Syarat Label",
+                body: "Label wajib memuat: Nama produk, Komposisi, Berat bersih, Nama & Alamat produsen, Halal, Exp Date, dan Kode Produksi.",
+                link: "#"
+            }
+        };
+
+        function changeStep(step) {
+            document.getElementById(`section${currentStep}`).classList.remove('active');
+            document.getElementById(`s${currentStep}`).classList.remove('active');
+            if(step === 1) document.getElementById(`s${currentStep}`).classList.add('completed');
+
+            currentStep += step;
+
+            if (currentStep > 4) {
+                alert("Data pengajuan BPOM berhasil dikirim ke auditor TrustScan! Proses verifikasi administrasi memakan waktu 5-10 hari kerja.");
+                window.location.href = "umkm-sertifikasi.html";
+                return;
+            }
+
+            document.getElementById(`section${currentStep}`).classList.add('active');
+            document.getElementById(`s${currentStep}`).classList.add('active');
+
+            // Update Help Sidebar
+            document.getElementById('helpTitle').innerText = helpData[currentStep].title;
+            document.getElementById('helpBody').innerHTML = `<p>${helpData[currentStep].body}</p>`;
+
+            // Update Buttons
+            document.getElementById('prevBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+            const btnLabels = ["", "Lanjut: Detail Komposisi", "Lanjut: Sarana Produksi", "Lanjut: Label & Kemasan", "Kirim Pengajuan"];
+            document.getElementById('nextBtn').innerText = btnLabels[currentStep];
+        }
+    </script>
+</body>
+</html>

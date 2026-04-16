@@ -145,19 +145,52 @@
         }
         .user-trigger img { width: 35px; border-radius: 50%; }
 
+         header { display: flex; justify-content: space-between; margin-bottom: 2rem; position: relative; }
+        .user-profile-trigger { display: flex; align-items: center; gap: 10px; cursor: pointer; background: var(--card-bg); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .user-profile-trigger img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; }
+        #accountPopup { position: absolute; top: 60px; right: 0; width: 250px; background: var(--card-bg); border-radius: 15px; border: 1px solid var(--border-color); box-shadow: var(--shadow); padding: 20px; display: none; z-index: 1001; }
+        .nav-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-weight: 500; text-decoration: none; }
     </style>
 </head>
 <body data-theme="light">
 
     <div class="container">
         <header class="no-print">
-            <a href="dashboard-umkm.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
-            <div class="user-trigger">
-                <span id="themeBtn" onclick="toggleTheme()" style="cursor:pointer; margin-right:15px;"><i class="fas fa-moon"></i></span>
-                <img src="https://ui-avatars.com/api/?name=Ilham+Faza&background=2563eb&color=fff" alt="User">
-                <span style="font-weight: 600;">UMKM Mode</span>
+            <div>
+                <a href="umkm-dashboard.html" class="btn-back"><i class="fas fa-arrow-left"></i> Kembali ke Dasbor</a>
             </div>
+
+            <div class="user-profile-trigger" onclick="togglePopup()">
+                <img src="https://ui-avatars.com/api/?name=Manov&background=2563eb&color=fff" alt="User">
+                <span style="font-weight: 600;">Entrepreneur</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div id="accountPopup">
+    <div style="text-align: center; margin-bottom: 15px;">
+        <img src="https://ui-avatars.com/api/?name=Manov&background=2563eb&color=fff" style="width: 50px; border-radius: 50%;">
+        <h5 style="margin-top: 10px;">Manov</h5>
+        <p style="font-size: 0.7rem; color: var(--text-secondary);">Owner TrustScan Shop</p>
+    </div>
+    <div style="border-top: 1px solid var(--border-color); padding-top: 10px;">
+        <a href="umkm-profile.html" class="nav-item" style="font-size: 0.9rem;">
+            <i class="fas fa-user-circle"></i> Pengaturan Profil
+        </a>
+        
+        <a href="umkm-dashboard-settings.html" class="nav-item" style="font-size: 0.9rem;">
+            <i class="fas fa-store-alt"></i> Pengaturan Toko
+        </a>
+
+        <div class="nav-item" style="font-size: 0.9rem;" onclick="toggleTheme()">
+            <i class="fas fa-adjust"></i> <span id="themeLabel">Mode Gelap</span>
+        </div>
+
+        <a href="index.html" class="nav-item" style="font-size: 0.9rem; color: #ef4444;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
+</div>
         </header>
+
 
         <div class="production-card no-print">
             <h2 style="margin-bottom: 10px;"><i class="fas fa-print"></i> Produksi & Cetak Label QR</h2>
@@ -218,6 +251,20 @@
     </div>
 
     <script>
+function togglePopup() {
+        const popup = document.getElementById('accountPopup');
+        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleTheme() {
+        const body = document.body;
+        const currentTheme = body.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        body.setAttribute('data-theme', newTheme);
+        document.getElementById('themeLabel').textContent = newTheme === 'light' ? 'Mode Gelap' : 'Mode Terang';
+        document.getElementById('themeIcon').className = newTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+    }
+
         // Set default date to today
         document.getElementById('prodDate').valueAsDate = new Date();
 

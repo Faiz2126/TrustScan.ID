@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Toko - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fe;
+            --card-bg: #ffffff;
+            --text-color: #1b2559;
+            --text-secondary: #a3aed0;
+            --primary-color: #4318ff;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --border-color: #e0e5f2;
+            --shadow: 0px 20px 40px rgba(112, 144, 176, 0.1);
+            --danger: #ff4d4d;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0b1437;
+            --card-bg: #111c44;
+            --text-color: #ffffff;
+            --text-secondary: #8f9bba;
+            --primary-color: #7551ff;
+            --nav-bg: rgba(17, 28, 68, 0.8);
+            --border-color: #1b254b;
+            --shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 80px; }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 0.8rem 5%;
+            background: var(--nav-bg); backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+
+        .settings-container {
+            max-width: 1100px; margin: 20px auto;
+            display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 5%;
+        }
+
+        .settings-sidebar {
+            background: var(--card-bg); border-radius: 20px; padding: 20px; height: fit-content; border: 1px solid var(--border-color);
+        }
+
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li {
+            padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px;
+            margin-bottom: 5px; font-weight: 500; color: var(--text-secondary);
+        }
+        .sidebar-menu li a { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; width: 100%; }
+        .sidebar-menu li.active { background: var(--bg-color); color: var(--primary-color); }
+        .sidebar-menu li:hover:not(.active) { background: var(--bg-color); color: var(--text-color); }
+
+        .settings-content {
+            background: var(--card-bg); border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); box-shadow: var(--shadow);
+        }
+
+        .section-title { margin-bottom: 25px; }
+        .section-title h2 { font-size: 1.5rem; margin-bottom: 5px; }
+        .section-title p { color: var(--text-secondary); font-size: 0.9rem; }
+
+        /* --- Fitur Ganti Foto Profil --- */
+        .profile-photo-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .photo-wrapper {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            background: var(--bg-color);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--primary-color);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 3px solid var(--card-bg);
+            font-size: 0.8rem;
+        }
+
+        .photo-info h4 { font-size: 1rem; margin-bottom: 5px; }
+        .photo-info p { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px; }
+        
+        .btn-upload-outline {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-upload-outline:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        /* ------------------------------- */
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+        .form-group input {
+            width: 100%; padding: 12px 15px; border-radius: 12px; border: 1px solid var(--border-color);
+            background: var(--bg-color); color: var(--text-color); font-size: 0.95rem;
+        }
+
+        .btn-save {
+            background: var(--primary-color); color: white; border: none; padding: 14px 25px;
+            border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .settings-container { grid-template-columns: 1fr; }
+            .settings-sidebar { display: flex; overflow-x: auto; padding: 10px; }
+            .sidebar-menu { display: flex; gap: 10px; }
+            .sidebar-menu li { white-space: nowrap; }
+            .profile-photo-section { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <nav>
+        <a href="dashboard-umkm.html" class="logo">TrustScan.id <span style="font-size: 0.8rem; opacity: 0.7;">| UMKM</span></a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div onclick="toggleTheme()" style="cursor: pointer; color: var(--text-secondary);"><i class="fas fa-moon" id="themeIcon"></i></div>
+            <a href="umkm-dashboard.html" style="text-decoration: none; color: var(--text-color); font-weight: 600; font-size: 0.9rem;"><i class="fas fa-arrow-left"></i> Kembali</a>
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <aside class="settings-sidebar">
+            <ul class="sidebar-menu">
+                <li class="active"><a href="umkm-profile.html"><i class="fas fa-store"></i> Profil Toko</a></li>
+                <li><a href="umkm-dashboard-settings.html"><i class="fas fa-laptop-code"></i> Dashboard Toko</a></li>
+                <li><a href="umkm-security.html"><i class="fas fa-shield-alt"></i> Keamanan</a></li>
+                <li><a href="umkm-notifications.html"><i class="fas fa-bell"></i> Notifikasi</a></li>
+                <li style="color: var(--danger);"><a href="umkm-delete-account.html"><i class="fas fa-trash"></i> Hapus Akun</a></li>
+            </ul>
+        </aside>
+
+        <section class="settings-content">
+            <div class="section-title">
+                <h2>Profil Pemilik & Toko</h2>
+                <p>Informasi identitas bisnis yang terdaftar di sistem.</p>
+            </div>
+
+            <div class="profile-photo-section">
+                <div class="photo-wrapper" onclick="document.getElementById('profileInput').click()">
+                    <img src="https://ui-avatars.com/api/?name=Warung+Pak+Aris&background=4318ff&color=fff" id="profilePreview" alt="Profile">
+                    <div class="photo-overlay">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div class="photo-info">
+                    <h4>Foto Profil Toko</h4>
+                    <p>Gunakan foto logo toko atau foto wajah pemilik.<br>Format: JPG, PNG. Maks 2MB.</p>
+                    <button class="btn-upload-outline" onclick="document.getElementById('profileInput').click()">Pilih Foto Baru</button>
+                    <input type="file" id="profileInput" hidden accept="image/*" onchange="previewProfilePhoto()">
+                </div>
+            </div>
+
+            <form onsubmit="return false">
+                <div class="form-group"><label>Nama Toko</label><input type="text" value="Warung Pak Aris"></div>
+                <div class="form-group"><label>Nama Pemilik</label><input type="text" value="Aris Setiawan"></div>
+                <div class="form-group"><label>Email Bisnis</label><input type="email" value="pak.aris@warung.id"></div>
+                <div class="form-group"><label>Nomor WhatsApp</label><input type="text" value="08123456789"></div>
+                <button class="btn-save" onclick="alert('Profil berhasil diperbarui!')">Simpan Perubahan Profil</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        // Fungsi Preview Foto Profil
+        function previewProfilePhoto() {
+            const preview = document.getElementById('profilePreview');
+            const file = document.getElementById('profileInput').files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+    </script>
+</body>
+</html>

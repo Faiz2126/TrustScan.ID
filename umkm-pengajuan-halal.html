@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengajuan Halal - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --bg-color: #f8fafc; --sidebar-bg: #ffffff; --card-bg: #ffffff; --text-color: #1e293b; --text-secondary: #64748b; --primary-color: #2563eb; --border-color: #e2e8f0; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); --success: #10b981; }
+        [data-theme="dark"] { --bg-color: #0f172a; --sidebar-bg: #1e293b; --card-bg: #1e293b; --text-color: #f1f5f9; --text-secondary: #94a3b8; --primary-color: #3b82f6; --border-color: #334155; --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: all 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; min-height: 100vh; }
+        
+        aside { width: 260px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); padding: 2rem 1.5rem; position: fixed; height: 100vh; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); margin-bottom: 2.5rem; }
+        .nav-item { padding: 12px 15px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; color: var(--text-secondary); font-weight: 500; text-decoration: none; }
+        .nav-item.active { background: var(--primary-color); color: white; }
+
+        main { flex: 1; margin-left: 260px; padding: 2rem 5%; display: grid; grid-template-columns: 1fr 300px; gap: 30px; }
+
+        /* Left Side: Form */
+        .form-container { min-width: 0; }
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .step { text-align: center; z-index: 2; flex: 1; position: relative; }
+        .step-icon { width: 35px; height: 35px; border-radius: 50%; background: var(--border-color); color: var(--text-secondary); display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; font-weight: bold; border: 4px solid var(--bg-color); }
+        .step.active .step-icon { background: var(--primary-color); color: white; }
+        .step.completed .step-icon { background: var(--success); color: white; }
+        .step-label { font-size: 0.7rem; font-weight: 600; color: var(--text-secondary); }
+
+        .form-card { background: var(--card-bg); border-radius: 20px; padding: 35px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.4s; }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); font-size: 0.9rem; }
+        
+        .helper-text { font-size: 0.75rem; color: var(--text-secondary); margin-top: 5px; display: block; }
+        
+        /* Right Side: Assistance Sidebar */
+        .assistance-sidebar { position: sticky; top: 2rem; height: fit-content; }
+        .help-card { background: #eff6ff; border-radius: 15px; padding: 20px; border: 1px solid #bfdbfe; color: #1e40af; }
+        .help-card h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.95rem; }
+        .help-content p { font-size: 0.85rem; line-height: 1.5; margin-bottom: 10px; }
+        .help-link { color: var(--primary-color); text-decoration: none; font-weight: 700; font-size: 0.85rem; display: block; margin-top: 5px; }
+        .help-link:hover { text-decoration: underline; }
+
+        .btn-group { display: flex; justify-content: space-between; margin-top: 30px; }
+        .btn { padding: 12px 25px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-prev { background: #e2e8f0; color: #475569; }
+        .btn-next { background: var(--primary-color); color: white; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body data-theme="light">
+    <aside>
+        <div class="logo">TrustScan.id</div>
+        <ul class="nav-menu">
+            <a href="umkm-dashboard.html" class="nav-item"><i class="fas fa-th-large"></i> Dasbor</a>
+            <a href="umkm-tambah-produk.html" class="nav-item"><i class="fas fa-plus-circle"></i> Tambah Produk</a>
+            <a href="umkm-sertifikasi.html" class="nav-item active"><i class="fas fa-certificate"></i> Sertifikasi</a>
+            <a href="umkm-produksi.html" class="nav-item"><i class="fas fa-calendar-check"></i> Produksi Hari Ini</a>
+        </ul>
+    </aside>
+
+    <main>
+        <div class="form-container">
+            <header style="margin-bottom: 2rem;">
+                <a href="umkm-sertifikasi.html" style="text-decoration:none; color:var(--text-secondary); font-size:0.9rem;"><i class="fas fa-arrow-left"></i> Kembali</a>
+                <h2 style="margin-top: 10px;">Formulir Pengajuan Halal</h2>
+            </header>
+
+            <div class="stepper">
+                <div class="step active" id="s1"><div class="step-icon">1</div><div class="step-label">Data Usaha</div></div>
+                <div class="step" id="s2"><div class="step-icon">2</div><div class="step-label">Bahan & PPH</div></div>
+                <div class="step" id="s3"><div class="step-icon">3</div><div class="step-label">Penyelia Halal</div></div>
+                <div class="step" id="s4"><div class="step-icon">4</div><div class="step-label">Dokumen</div></div>
+            </div>
+
+            <div class="form-card">
+                <form id="halalForm">
+                    <div class="form-section active" id="section1">
+                        <div class="form-group">
+                            <label>Nomor Induk Berusaha (NIB)</label>
+                            <input type="text" placeholder="Masukkan 13 digit NIB">
+                            <span class="helper-text">Wajib berbasis Risiko (OSS RBA).</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Modal Usaha (Rp)</label>
+                            <input type="number" placeholder="Contoh: 15000000">
+                            <span class="helper-text">Maksimal Rp 2 Miliar untuk jalur Self-Declare.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Merk Dagang</label>
+                            <input type="text" placeholder="Contoh: Basreng Si Jago">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section2">
+                        <div class="form-group">
+                            <label>Daftar Bahan (Bahan Baku, Tambahan, Penolong)</label>
+                            <textarea rows="3" placeholder="Contoh: Tepung tapioka (Merk Rose Brand), Ikan tenggiri segar, Minyak goreng..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Narasi Proses Produk Halal (PPH)</label>
+                            <textarea rows="4" placeholder="Jelaskan cara pembuatan dari awal sampai pengemasan secara singkat..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section3">
+                        <div class="form-group">
+                            <label>Nama Penyelia Halal</label>
+                            <input type="text" placeholder="Nama penanggung jawab halal di toko">
+                            <span class="helper-text">Boleh pemilik usaha sendiri (untuk muslim).</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor Kontak Penyelia (WA)</label>
+                            <input type="text" placeholder="08xxxx">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="section4">
+                        <div class="form-group">
+                            <label>Manual SJPH (Sistem Jaminan Produk Halal)</label>
+                            <input type="file">
+                            <span class="helper-text">Format PDF. Gunakan template yang disediakan di sidebar.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>Pernyataan Pelaku Usaha (Ikrar Halal)</label>
+                            <div style="display: flex; gap: 10px; align-items: flex-start; background: var(--bg-color); padding: 10px; border-radius: 10px;">
+                                <input type="checkbox" id="ikrar" style="width: auto; margin-top: 4px;">
+                                <label for="ikrar" style="font-size: 0.8rem; font-weight: 500;">Saya menjamin bahwa seluruh bahan yang digunakan adalah Halal dan proses produksi bebas dari kontaminasi najis.</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-prev" id="prevBtn" style="visibility: hidden;" onclick="changeStep(-1)">Sebelumnya</button>
+                        <button type="button" class="btn btn-next" id="nextBtn" onclick="changeStep(1)">Lanjut: Bahan & PPH</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="assistance-sidebar">
+            <div class="help-card" id="helpContent">
+                <h4><i class="fas fa-lightbulb"></i> <span id="helpTitle">Butuh Bantuan?</span></h4>
+                <div class="help-content" id="helpBody">
+                    <p>Pastikan Anda sudah memiliki NIB dari sistem OSS sebelum mendaftar.</p>
+                    <a href="https://oss.go.id" target="_blank" class="help-link">Cara Daftar NIB di OSS &rarr;</a>
+                </div>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #bfdbfe;">
+                <div class="download-section">
+                    <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 8px;">Template Dokumen:</p>
+                    <a href="#" class="help-link"><i class="fas fa-file-download"></i> Contoh Surat Bebas Babi</a>
+                    <a href="#" class="help-link"><i class="fas fa-file-download"></i> Template Manual SJPH</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentStep = 1;
+        const helpData = {
+            1: {
+                title: "Tentang NIB & Modal",
+                body: "NIB adalah identitas resmi usaha Anda. Untuk jalur Halal Gratis (Self-Declare), modal usaha tidak boleh melebihi Rp 2 Miliar (luar tanah & bangunan).",
+                link: "https://oss.go.id"
+            },
+            2: {
+                title: "Panduan Bahan & PPH",
+                body: "Tuliskan merk bahan jika bahan tersebut olahan (misal: Tepung Bogasari). PPH harus menjelaskan bahwa alat masak tidak bercampur dengan bahan haram.",
+                link: "#"
+            },
+            3: {
+                title: "Siapa Penyelia Halal?",
+                body: "Penyelia Halal adalah orang yang bertanggung jawab mengawasi proses produksi. Jika Anda pemilik dan beragama Islam, Anda bisa menunjuk diri sendiri.",
+                link: "#"
+            },
+            4: {
+                title: "Finalisasi Dokumen",
+                body: "Unduh Template Manual SJPH di bawah, isi datanya, lalu simpan kembali sebagai PDF untuk diunggah.",
+                link: "#"
+            }
+        };
+
+        function changeStep(step) {
+            document.getElementById(`section${currentStep}`).classList.remove('active');
+            document.getElementById(`s${currentStep}`).classList.remove('active');
+            if(step === 1) document.getElementById(`s${currentStep}`).classList.add('completed');
+
+            currentStep += step;
+
+            if (currentStep > 4) {
+                alert("Pengajuan Anda telah diterima oleh BPJPH TrustScan.id! Status akan diperbarui dalam 7-14 hari kerja.");
+                window.location.href = "umkm-sertifikasi.html";
+                return;
+            }
+
+            document.getElementById(`section${currentStep}`).classList.add('active');
+            document.getElementById(`s${currentStep}`).classList.add('active');
+
+            // Update Help Sidebar
+            document.getElementById('helpTitle').innerText = helpData[currentStep].title;
+            document.getElementById('helpBody').innerHTML = `<p>${helpData[currentStep].body}</p>`;
+
+            // Update Buttons
+            document.getElementById('prevBtn').style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+            const btnLabels = ["", "Lanjut: Bahan & PPH", "Lanjut: Penyelia Halal", "Lanjut: Upload Dokumen", "Kirim Pengajuan"];
+            document.getElementById('nextBtn').innerText = btnLabels[currentStep];
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const newTheme = body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+        }
+    </script>
+</body>
+</html>

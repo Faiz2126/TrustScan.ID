@@ -382,11 +382,11 @@
             if (inputPass === "") {
                 if (inputId === "user") {
                     alert('Login Berhasil sebagai PENGGUNA. Mengalihkan...');
-                    window.location.href = 'dashboard-pengguna.html';
+                    window.location.href = 'user-dashboard.html';
                 } 
                 else if (inputId === "umkm") {
                     alert('Login Berhasil sebagai UMKM. Mengalihkan...');
-                    window.location.href = 'dashboard-umkm.html';
+                    window.location.href = 'umkm-dashboard.html';
                 } 
                 else {
                     alert('Input tidak dikenal. Gunakan kata "user" atau "umkm" dan kosongkan password.');
@@ -400,9 +400,9 @@
         function handleAuth(type) {
             alert('Pendaftaran berhasil! Mengalihkan ke Dashboard ' + type.toUpperCase() + '...');
             if(type === 'umkm') {
-                window.location.href = 'dashboard-umkm.html';
+                window.location.href = 'register-umkm.html';
             } else {
-                window.location.href = 'dashboard-pengguna.html';
+                window.location.href = 'register-user.html';
             }
         }
     </script>

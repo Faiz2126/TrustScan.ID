@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fe;
+            --card-bg: #ffffff;
+            --text-color: #1b2559;
+            --text-secondary: #a3aed0;
+            --primary-color: #4318ff;
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            --border-color: #e0e5f2;
+            --shadow: 0px 20px 40px rgba(112, 144, 176, 0.1);
+            --danger: #ff4d4d;
+            --success: #05cd99;
+            --warning: #ffb800;
+            --info: #01b9ff;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0b1437;
+            --card-bg: #111c44;
+            --text-color: #ffffff;
+            --text-secondary: #8f9bba;
+            --primary-color: #7551ff;
+            --nav-bg: rgba(17, 28, 68, 0.8);
+            --border-color: #1b254b;
+            --shadow: 0px 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'DM Sans', 'Inter', sans-serif;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-top: 80px;
+        }
+
+        nav {
+            position: fixed;
+            top: 0; width: 100%; padding: 0.8rem 5%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(12px);
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+
+        .settings-container {
+            max-width: 1000px; margin: 20px auto;
+            display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 5%;
+        }
+
+        /* Sidebar */
+        .settings-sidebar {
+            background: var(--card-bg); border-radius: 20px; padding: 20px; height: fit-content; border: 1px solid var(--border-color);
+        }
+
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li {
+            padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 5px; font-weight: 500; color: var(--text-secondary);
+        }
+        .sidebar-menu li.active { background: var(--bg-color); color: var(--primary-color); }
+        .sidebar-menu a { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; }
+
+        /* Content Area */
+        .content-card {
+            background: var(--card-bg); border-radius: 20px; padding: 25px; border: 1px solid var(--border-color); box-shadow: var(--shadow); margin-bottom: 25px;
+        }
+
+        .section-header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .section-header h3 { font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+
+        /* Preference Items */
+        .preference-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--border-color);
+        }
+        .preference-item:last-child { border-bottom: none; }
+        .pref-info h4 { font-size: 0.95rem; margin-bottom: 4px; }
+        .pref-info p { font-size: 0.8rem; color: var(--text-secondary); }
+
+        /* Notification List */
+        .notif-feed { display: flex; flex-direction: column; gap: 12px; }
+        .notif-item {
+            display: flex; gap: 15px; padding: 15px; border-radius: 15px; background: var(--bg-color); border: 1px solid transparent; cursor: pointer;
+        }
+        .notif-item:hover { border-color: var(--primary-color); background: var(--card-bg); }
+        .notif-item.unread { border-left: 4px solid var(--primary-color); }
+
+        .notif-icon {
+            width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .icon-blue { background: rgba(67, 24, 255, 0.1); color: var(--primary-color); }
+        .icon-red { background: rgba(255, 77, 77, 0.1); color: var(--danger); }
+        .icon-green { background: rgba(5, 205, 153, 0.1); color: var(--success); }
+        .icon-yellow { background: rgba(255, 184, 0, 0.1); color: var(--warning); }
+
+        .notif-content { flex: 1; }
+        .notif-content h4 { font-size: 0.9rem; margin-bottom: 3px; display: flex; justify-content: space-between; }
+        .notif-content p { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; }
+        .notif-time { font-size: 0.7rem; color: var(--text-secondary); font-weight: 400; }
+
+        /* Switch Toggle */
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-color); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        @media (max-width: 768px) {
+            .settings-container { grid-template-columns: 1fr; }
+            .settings-sidebar { overflow-x: auto; }
+            .sidebar-menu { display: flex; gap: 10px; }
+        }
+    </style>
+</head>
+<body data-theme="light">
+
+    <nav>
+        <a href="dashboard.html" class="logo">TrustScan.id</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div onclick="toggleTheme()" style="cursor: pointer; color: var(--text-secondary);">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </div>
+            <a href="user-dashboard.html" style="text-decoration: none; color: var(--text-color); font-weight: 600; font-size: 0.9rem;">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </a>
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <aside class="settings-sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="user-settings.html"><i class="fas fa-user"></i> Profil</a></li>
+                <li><a href="user-security.html"><i class="fas fa-shield-alt"></i> Keamanan</a></li>
+                <li class="active"><a href="user-notifications.html"><i class="fas fa-bell"></i> Notifikasi</a></li>
+                <li style="color: var(--danger);"><a href="user-delete-account.html"><i class="fas fa-trash"></i> Hapus Akun</a></li>
+            </ul>
+        </aside>
+
+        <div class="settings-content">
+            
+            <section class="content-card">
+                <div class="section-header">
+                    <h3><i class="fas fa-sliders-h" style="color: var(--primary-color);"></i> Preferensi Notifikasi</h3>
+                </div>
+                <div class="preference-item">
+                    <div class="pref-info">
+                        <h4>Notifikasi Email</h4>
+                        <p>Terima laporan transaksi dan info akun melalui email.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="preference-item">
+                    <div class="pref-info">
+                        <h4>Push Notification</h4>
+                        <p>Dapatkan notifikasi real-time di browser atau HP.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="preference-item">
+                    <div class="pref-info">
+                        <h4>Info Promo & Produk</h4>
+                        <p>Notifikasi tentang diskon di toko sekitar Anda.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="content-card">
+                <div class="section-header">
+                    <h3><i class="fas fa-envelope-open-text" style="color: var(--info);"></i> Riwayat Notifikasi</h3>
+                    <button style="background: none; border: none; color: var(--primary-color); font-size: 0.8rem; font-weight: 600; cursor: pointer;">Tandai semua dibaca</button>
+                </div>
+                
+                <div class="notif-feed">
+                    <div class="notif-item unread">
+                        <div class="notif-icon icon-blue">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="notif-content">
+                            <h4>Pesanan Berhasil! <span class="notif-time">Baru saja</span></h4>
+                            <p>Pembayaran untuk <b>Bakso Mercon Super</b> telah dikonfirmasi. Silakan ambil di toko.</p>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon icon-red">
+                            <i class="fas fa-shield-check"></i>
+                        </div>
+                        <div class="notif-content">
+                            <h4>Login Baru Terdeteksi <span class="notif-time">2 jam yang lalu</span></h4>
+                            <p>Akun Anda diakses melalui perangkat Windows 11 di Malang. Bukan Anda? Segera ganti password.</p>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon icon-yellow">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="notif-content">
+                            <h4>Toko Baru di Dekatmu! <span class="notif-time">Kemarin</span></h4>
+                            <p><b>Faza Robotika</b> baru saja membuka cabang di dekat lokasimu. Cek produknya sekarang!</p>
+                        </div>
+                    </div>
+
+                    <div class="notif-item">
+                        <div class="notif-icon icon-green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="notif-content">
+                            <h4>Update Profil Berhasil <span class="notif-time">3 hari yang lalu</span></h4>
+                            <p>Perubahan foto profil dan bio Anda telah disimpan dengan sukses.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+    </script>
+</body>
+</html>

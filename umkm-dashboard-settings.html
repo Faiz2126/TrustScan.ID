@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Toko - TrustScan.id</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* ... CSS yang sama dengan Profile ... */
+        :root { --bg-color: #f4f7fe; --card-bg: #ffffff; --text-color: #1b2559; --text-secondary: #a3aed0; --primary-color: #4318ff; --nav-bg: rgba(255, 255, 255, 0.8); --border-color: #e0e5f2; --shadow: 0px 20px 40px rgba(112, 144, 176, 0.1); --danger: #ff4d4d; }
+        [data-theme="dark"] { --bg-color: #0b1437; --card-bg: #111c44; --text-color: #ffffff; --text-secondary: #8f9bba; --primary-color: #7551ff; --nav-bg: rgba(17, 28, 68, 0.8); --border-color: #1b254b; --shadow: 0px 20px 40px rgba(0, 0, 0, 0.3); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'DM Sans', sans-serif; transition: all 0.25s; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 80px; }
+        nav { position: fixed; top: 0; width: 100%; padding: 0.8rem 5%; background: var(--nav-bg); backdrop-filter: blur(12px); display: flex; justify-content: space-between; align-items: center; z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .logo { font-size: 1.4rem; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        .settings-container { max-width: 1100px; margin: 20px auto; display: grid; grid-template-columns: 280px 1fr; gap: 30px; padding: 0 5%; }
+        .settings-sidebar { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border-color); }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { padding: 15px; border-radius: 12px; margin-bottom: 5px; font-weight: 500; color: var(--text-secondary); }
+        .sidebar-menu li a { text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; width: 100%; }
+        .sidebar-menu li.active { background: var(--bg-color); color: var(--primary-color); }
+        .settings-content { background: var(--card-bg); border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--text-secondary); }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-color); color: var(--text-color); }
+        .btn-save { background: var(--primary-color); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; }
+
+        /* Banner Style */
+        .banner-upload {
+            width: 100%; height: 200px; border-radius: 15px; background: #eee;
+            margin-bottom: 20px; position: relative; overflow: hidden; border: 2px dashed var(--border-color);
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .banner-upload img { width: 100%; height: 100%; object-fit: cover; position: absolute; }
+        .upload-overlay { position: relative; z-index: 2; text-align: center; color: var(--text-secondary); }
+    </style>
+</head>
+<body data-theme="light">
+
+    <nav>
+        <a href="umkm-dashboard.html" class="logo">TrustScan.id <span style="font-size: 0.8rem; opacity: 0.7;">| UMKM</span></a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div onclick="toggleTheme()" style="cursor: pointer; color: var(--text-secondary);"><i class="fas fa-moon" id="themeIcon"></i></div>
+            <a href="umkm-dashboard.html" style="text-decoration: none; color: var(--text-color); font-weight: 600; font-size: 0.9rem;"><i class="fas fa-arrow-left"></i> Kembali</a>
+        </div>
+    </nav>
+
+    <main class="settings-container">
+        <aside class="settings-sidebar">
+            <ul class="sidebar-menu">
+    <li><a href="umkm-profile.html"><i class="fas fa-store"></i> Profil Toko</a></li>
+    
+    <li class="active"><a href="umkm-dashboard-settings.html"><i class="fas fa-laptop-code"></i> Dashboard Toko</a></li>
+    
+    <li><a href="umkm-security.html"><i class="fas fa-shield-alt"></i> Keamanan</a></li>
+    <li><a href="umkm-notifications.html"><i class="fas fa-bell"></i> Notifikasi</a></li>
+    <li style="color: var(--danger);"><a href="umkm-delete-account.html"><i class="fas fa-trash"></i> Hapus Akun</a></li>
+</ul>
+        </aside>
+
+        <section class="settings-content">
+            <div class="section-title">
+                <h2 style="font-size: 1.5rem; margin-bottom: 5px;">Tampilan Dashboard Toko</h2>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 25px;">Atur bagaimana pengguna melihat toko Anda di aplikasi.</p>
+            </div>
+
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 10px;">Banner Toko</label>
+            <div class="banner-upload" onclick="document.getElementById('bannerInput').click()">
+                <img src="https://images.unsplash.com/photo-1541518763669-27fef04b14ea?auto=format&fit=crop&w=800&q=80" id="bannerPreview">
+                <div class="upload-overlay"><i class="fas fa-camera fa-2x"></i><p>Ganti Banner</p></div>
+                <input type="file" id="bannerInput" hidden onchange="previewBanner()">
+            </div>
+
+            <form onsubmit="return false">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="form-group">
+                        <label>Status Operasional</label>
+                        <select><option>Buka</option><option>Tutup Sementara</option></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select><option>Makanan</option><option>Minuman</option></select>
+                    </div>
+                </div>
+                <div class="form-group"><label>Deskripsi Toko</label><textarea rows="3">Warung Bakso Mercon legendaris di Malang.</textarea></div>
+                <div class="form-group"><label>Lokasi (Link Google Maps)</label><input type="text" placeholder="https://goo.gl/maps/..."></div>
+                <button class="btn-save" onclick="alert('Dashboard diperbarui!')">Update Tampilan Toko</button>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        function previewBanner() {
+            const preview = document.getElementById('bannerPreview');
+            const file = document.getElementById('bannerInput').files[0];
+            const reader = new FileReader();
+            reader.onloadend = () => { preview.src = reader.result; }
+            if (file) reader.readAsDataURL(file);
+        }
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            if (body.getAttribute('data-theme') === 'light') {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.className = 'fas fa-moon';
+            }
+        }
+    </script>
+</body>
+</html>
